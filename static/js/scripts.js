@@ -19,7 +19,7 @@ $(document).ready(function () {
         $("#ideas-container").empty();
     });
 
-    $("#submit-ideas").click(function () {
+    $("#submit-ideas").off("click").on("click", function () {
         const inputText = $("#ideas-input").val();
         const parsedIdeas = parseInput(inputText);
 
