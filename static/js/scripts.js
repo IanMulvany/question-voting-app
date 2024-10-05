@@ -26,6 +26,7 @@ $(document).ready(function () {
         for (const idea of parsedIdeas) {
             socket.emit("submit_idea", idea);
         }
+        $("#ideas-input").val(''); // Clear the input after submission
     });
 
     $("#clear-board").click(function () {
