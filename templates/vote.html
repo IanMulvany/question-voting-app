@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote on Ideas</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="static/js/scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Vote on Ideas</h1>
+    <div id="ideas-container"></div>
+    <script>
+        $(document).ready(function () {
+            const socket = io();
+
+            socket.on("init", function (ideas) {
+                for (let idea of ideas) {
+                    addIdeaCard(idea);
+                }
+            });
+
+            socket.on("update_vote", function (idea) {
+                $(`#idea-${idea.id} .vote-count`).text(idea.votes);
+            });
+
+            function addIdeaCard(idea) {
+                const card = $("<div>")
+                    .addClass("idea-card")
+                    .attr("id", `idea-${idea.id}`);
+                const title = $("<h3>").text(idea.title);
+                const descriptionList = $("<ul>").addClass("card-description list-unstyled");
+
+                if (idea.description) {
+                    const descriptionLines = idea.description.split("\n");
+                    for (const line of descriptionLines) {
+                        if (line.trim() !== "") {
+                            const listItem = $("<li>").text(line);
+                            descriptionList.append(listItem);
+                        }
+                    }
+                }
+
+                const voteButtons = $("<div>").addClass("vote-buttons");
+                const upvoteButton = $("<button>")
+                    .text("Upvote")
+                    .addClass("upvote-button");
+                const downvoteButton = $("<button>")
+                    .text("Downvote")
+                    .addClass("downvote-button");
+                const voteCount = $("<span>").text(idea.votes).addClass("vote-count");
+
+                upvoteButton.click(function () {
+                    socket.emit("vote", { id: idea.id, change: 1 });
+                });
+
+                downvoteButton.click(function () {
+                    socket.emit("vote", { id: idea.id, change: -1 });
+                });
+
+                voteButtons.append(upvoteButton, voteCount, downvoteButton);
+                card.append(title, descriptionList, voteButtons);
+                $("#ideas-container").append(card);
+            }
+        });
+    </script>
+</body>
+</html>
