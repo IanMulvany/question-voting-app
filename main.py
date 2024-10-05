@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, jsonify
-from hello import hello
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_socketio import SocketIO, emit
@@ -62,7 +61,7 @@ def on_submit_idea(data):
 
 @socketio.on('vote')
 def on_vote(data):
-    idea = Idea.query.get(data['id'])
+    idea = db.session.get(Idea, data['id'])
     if idea:
         idea.votes += data['change']
         db.session.commit()
