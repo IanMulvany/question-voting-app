@@ -43,6 +43,11 @@ def vote():
 def admin():
     return render_template('admin.html')
 
+@app.route('/questions')
+def questions():
+    ideas = Idea.query.all()
+    return render_template('questions.html', ideas=ideas)
+
 @socketio.on('connect')
 def on_connect():
     ideas = Idea.query.all()
