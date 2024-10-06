@@ -1,0 +1,23 @@
+/* Add your styles here */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.idea-card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    margin: 16px;
+    width: 300px;
+    background-color: white;
+}
+
+.vote-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.vote-buttons button {
+    cursor: pointer;
+}
