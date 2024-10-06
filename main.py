@@ -47,6 +47,10 @@ def questions():
     ideas = Idea.query.all()
     return render_template('questions.html', ideas=ideas)
 
+@app.route('/submit-question')
+def submit_question():
+    return render_template('submit_question.html')
+
 @socketio.on('connect')
 def on_connect():
     ideas = Idea.query.all()
