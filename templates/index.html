@@ -62,14 +62,16 @@
       const socket = io();
 
       socket.on("init", function (ideas) {
+        $("#ideas-container").empty(); // Clear existing ideas to prevent duplicates
         for (let idea of ideas) {
           addIdeaCard(idea);
         }
       });
 
-      socket.on("idea", function (idea) {
-        addIdeaCard(idea);
-      });
+      // Remove the 'idea' event listener if it's not needed
+      // socket.on("idea", function (idea) {
+      //   addIdeaCard(idea);
+      // });
 
       socket.on("update_vote", function (idea) {
         $(`#idea-${idea.id} .vote-count`).text(idea.votes);
