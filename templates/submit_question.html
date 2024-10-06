@@ -25,7 +25,14 @@
     ></textarea>
     <button id="submit-ideas">Submit Question</button>
     <button id="clear-board">Clear Board</button>
-    <div id="ideas-container"></div>
+    <div id="submitted-question" style="margin-top: 20px; display: none;">
+      <h2>You have successfully submitted the following question:</h2>
+      <div class="idea-card" id="user-question">
+        <h3 id="user-question-title"></h3>
+        <ul class="card-description list-unstyled" id="user-question-description"></ul>
+      </div>
+      <p>You can now <a href="/questions">view all questions</a> or <a href="/vote">vote on questions</a>.</p>
+    </div>
 
     <script>
       $(document).ready(function () {

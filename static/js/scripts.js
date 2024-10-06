@@ -5,6 +5,18 @@ $(document).ready(function () {
         for (let idea of ideas) {
             addIdeaCard(idea);
         }
+        $("#submitted-question").show();
+        $("#user-question-title").text(parsedIdeas[0].title);
+        $("#user-question-description").empty();
+        if (parsedIdeas[0].description) {
+            const descriptionLines = parsedIdeas[0].description.split("\n");
+            for (const line of descriptionLines) {
+                if (line.trim() !== "") {
+                    const listItem = $("<li>").text(line);
+                    $("#user-question-description").append(listItem);
+                }
+            }
+        }
     });
 
     socket.on("idea", function (idea) {
