@@ -79,37 +79,20 @@
         $("#ideas-container").empty();
       });
 
-      $("#submit-ideas").off("click").on("click", function () {
+      $("#submit-ideas").one("click", function () {
         const inputText = $("#ideas-input").val();
 
         function parseInput(input) {
-          let lines = input.trim().split("\n");
-          let ideas = [];
-          let currentIdea = null;
-
-          for (let line of lines) {
-            if (line.startsWith(" ") || line.startsWith("\t")) {
-              if (currentIdea) {
-                currentIdea.description += "\n" + line.trim();
-              }
-            } else {
-              if (currentIdea) {
-                ideas.push(currentIdea);
-              }
-              currentIdea = { title: line.trim(), description: "" };
-            }
-          }
-
-          if (currentIdea) {
-            ideas.push(currentIdea);
-          }
-
-          return ideas;
+          return [{
+            title: "New Question",
+            description: input.trim()
+          }];
         }
 
         const parsedIdeas = parseInput(inputText);
 
         for (const idea of parsedIdeas) {
+          // console.log("Submitting idea:", idea); // Log the idea being submitted
           socket.emit("submit_idea", idea);
         }
       });
