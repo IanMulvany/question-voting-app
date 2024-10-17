@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from admin import admin
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_socketio import SocketIO, emit
@@ -38,9 +39,6 @@ def vote():
     ideas = Idea.query.all()
     return render_template('vote.html', ideas=ideas)
 
-@app.route('/admin')
-def admin():
-    return render_template('admin.html')
 
 @app.route('/questions')
 def questions():
