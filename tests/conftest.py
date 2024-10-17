@@ -8,7 +8,7 @@ sys.path.insert(
 )
 
 import pytest
-from main import app, db  # Import the app and db from main.py
+from main import app, db, Idea  # Import the app, db, and Idea from main.py
 
 @pytest.fixture(scope="function")
 def test_app():
