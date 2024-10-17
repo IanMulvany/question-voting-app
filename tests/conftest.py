@@ -22,7 +22,17 @@ def test_app():
         db.drop_all()
 
 @pytest.fixture(scope="function")
-def client(test_app):
+def setup_test_data(test_app):
+    with test_app.app_context():
+        # Create some test data
+        idea1 = Idea(title="Test Idea 1", description="Description for test idea 1")
+        idea2 = Idea(title="Test Idea 2", description="Description for test idea 2")
+        db.session.add(idea1)
+        db.session.add(idea2)
+        db.session.commit()
+
+@pytest.fixture(scope="function")
+def client(test_app, setup_test_data):
     with test_app.app_context():
         db.create_all()
 
