@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, jsonify
-from admin import admin
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_socketio import SocketIO, emit
@@ -48,6 +47,10 @@ def questions():
 @app.route('/submit-question')
 def submit_question():
     return render_template('submit_question.html')
+
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')
 
 @socketio.on('connect')
 def on_connect():
