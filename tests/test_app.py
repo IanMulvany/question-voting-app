@@ -32,6 +32,8 @@ def test_admin_page(client):
     response = client.get(url_for('admin'))
     assert response.status_code == 200
     assert b"Admin" in response.data  # Assuming the page contains "Admin"
+
+def test_idea_creation(client, session):
     """Test creating a new idea."""
     response = client.post(
         url_for("submit_idea"),
