@@ -35,10 +35,8 @@ def setup_test_data(test_app):
 def client(test_app, setup_test_data):
     with test_app.app_context():
         db.create_all()
-
-    client = test_app.test_client()
-
-    yield client
+        client = test_app.test_client()
+        yield client
 
     with test_app.app_context():
         db.session.remove()
