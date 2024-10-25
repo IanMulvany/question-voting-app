@@ -14,6 +14,7 @@ from main import app, db, Idea  # Import the app, db, and Idea from main.py
 def test_app():
     app.config['TESTING'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+    app.config['SERVER_NAME'] = 'localhost'
     with app.app_context():
         db.create_all()
     yield app
