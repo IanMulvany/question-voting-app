@@ -1,6 +1,6 @@
 import pytest
 from flask import url_for
-from flask_socketio import SocketIOTestClient
+from flask_socketio import SocketIOTestClient, join_room, leave_room
 from main import app, db, Idea, socketio  # Import the socketio instance
 
 
@@ -58,7 +58,8 @@ def test_setup_test_data(client, session):
 @pytest.fixture
 def socket_client(test_app):
     """Create a Socket.IO test client."""
-    socketio_client = SocketIOTestClient(socketio, app)  # Pass the socketio instance
+    client = test_app.test_client()
+    socketio_client = socketio.test_client(test_app, flask_test_client=client)
     return socketio_client
 
 
