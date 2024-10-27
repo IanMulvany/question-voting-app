@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, jsonify
-from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -81,7 +80,6 @@ def on_clear_board():
     emit('clear_board', broadcast=True)
 
 manager = Manager(app)
-manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':
     manager.run()
