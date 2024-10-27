@@ -18,21 +18,6 @@ This is a Python3 Flask project for an idea voting application. The app allows u
 - Flask-Migrate
 - Flask-SocketIO
 
-## Developing locally
-
-This is being developed using `uv` as a warpper around python.  
-For development now, activate the following virtual env:
-```bash
-source qva/bin/activate
-```
-
-For development with Aider, you need to set the OpenAI API key.
-```bash
-export OPENAI_API_KEY=your-api-key-here
-```
-
-Before developing - run the tests locally.
-
 
 
 ## Installation
@@ -53,6 +38,34 @@ Before developing - run the tests locally.
    ```bash
    pip install -r requirements.txt
    ```
+
+### Setting up the DB 
+
+```bash
+flask db init
+flask db migrate -m "Initial migration."
+flask db upgrade 
+```
+
+## Developing locally
+
+This is being developed using `uv` as a warpper around python.  
+For development now, activate the following virtual env:
+```bash
+source qva/bin/activate
+```
+
+For development with Aider, you need to set the OpenAI API key.
+```bash
+$ export OPENAI_API_KEY=your-api-key-here
+```
+
+Before developing - run the tests locally from the directory that conatins the tests directory.
+
+```bash
+$ pytest -s 
+```
+
 
 ## Running the Application
 
@@ -75,6 +88,3 @@ To run the application in development mode with live reloading, use the followin
 FLASK_ENV=development python main.py
 ```
 
-## License
-
-This project is licensed under the MIT License.
