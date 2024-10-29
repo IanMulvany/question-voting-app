@@ -39,13 +39,6 @@ This is a Python3 Flask project for an idea voting application. The app allows u
    pip install -r requirements.txt
    ```
 
-### Setting up the DB 
-
-```bash
-flask db init
-flask db migrate -m "Initial migration."
-flask db upgrade 
-```
 
 ## Developing locally
 
@@ -59,11 +52,25 @@ For development with Aider, you need to set the OpenAI API key.
 ```bash
 $ export OPENAI_API_KEY=your-api-key-here
 ```
+Make sure that flask can recognise the local app
+
+```bash
+$ export FLASK_APP=main.py
+```
 
 Before developing - run the tests locally from the directory that conatins the tests directory.
 
 ```bash
 $ pytest -s 
+```
+
+
+### Setting up the DB 
+
+```bash
+flask db init
+flask db migrate -m "Initial migration"
+flask db upgrade 
 ```
 
 
