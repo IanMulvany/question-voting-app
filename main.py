@@ -9,7 +9,7 @@ migrate = Migrate()
 socketio = SocketIO()
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///ideas.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///ideas_backup.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
