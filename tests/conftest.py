@@ -23,7 +23,7 @@ def test_app():
         db.drop_all()
 
 @pytest.fixture(scope="function")
-def setup_test_data(test_app):
+def setup_test_data(test_app): #test app is defined to use sqlite://:memory 
     with test_app.app_context():
         # Create some test data
         idea1 = Idea(title="Test Idea 1", description="Description for test idea 1")
@@ -33,11 +33,11 @@ def setup_test_data(test_app):
         db.session.commit()
 
 @pytest.fixture(scope="function")
-def client(test_app, setup_test_data):
+def client(test_app, setup_test_data): #test app is defined to use sqlite://:memory and to add test data
     with test_app.app_context():
         db.create_all()
         client = test_app.test_client()
-        yield client
+        yield client #client is made available to the test 
 
     with test_app.app_context():
         db.session.remove()
