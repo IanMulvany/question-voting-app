@@ -65,12 +65,14 @@ $ pytest -s
 ```
 
 
-### Setting up the DB 
+### Starting the app from scratch and Setting up the DB for the first time. 
 
 ```bash
+export FLASK_APP=main 
 flask db init
 flask db migrate -m "Initial migration"
 flask db upgrade 
+python main.py
 ```
 
 
@@ -78,6 +80,7 @@ flask db upgrade
 
 1. Initialize the database:
    ```bash
+   export FLASK_APP=main 
    flask db upgrade
    ```
 
@@ -87,6 +90,7 @@ flask db upgrade
    ```
 
 3. Open your web browser and go to `http://localhost:5000` to access the application.
+
 
 ## Development
 
