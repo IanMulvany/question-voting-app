@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_socketio import SocketIO, emit
+import os
 
 # Initialize extensions
 db = SQLAlchemy()
@@ -9,7 +10,9 @@ migrate = Migrate()
 socketio = SocketIO()
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///ideas_backup.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+    "DATABASE_URL", "sqlite:///ideas_prod.db"
+)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
