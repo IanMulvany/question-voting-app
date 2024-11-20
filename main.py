@@ -2,13 +2,22 @@ from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_socketio import SocketIO, emit
+import os
+
+# Initialize extensions
+db = SQLAlchemy()
+migrate = Migrate()
+socketio = SocketIO()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ideas.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+    "DATABASE_URL", "sqlite:///ideas_prod.db"
+)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 socketio = SocketIO(app)
+
 
 class Idea(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -22,60 +31,71 @@ class Idea(db.Model):
 
     def serialize(self):
         return {
-            'id': self.id,
-            'title': self.title,
-            'description': self.description,
-            'votes': self.votes
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "votes": self.votes,
         }
 
-@app.route('/')
+
+@app.route("/")
 def home():
     ideas = Idea.query.all()
-    return render_template('index.html', ideas=ideas)
+    return render_template("index.html", ideas=ideas)
 
-@app.route('/vote')
+
+@app.route("/vote")
 def vote():
     ideas = Idea.query.all()
-    return render_template('vote.html', ideas=ideas)
+    return render_template("vote.html", ideas=ideas)
 
-@app.route('/admin')
-def admin():
-    return render_template('admin.html')
 
-@app.route('/questions')
+@app.route("/questions")
 def questions():
     ideas = Idea.query.all()
-    return render_template('questions.html', ideas=ideas)
+    return render_template("questions.html", ideas=ideas)
 
-@app.route('/submit-question')
+
+@app.route("/submit-question")
 def submit_question():
-    return render_template('submit_question.html')
+    return render_template("submit_question.html")
 
-@socketio.on('connect')
+
+@app.route("/admin")
+def admin():
+    return render_template("admin.html")
+
+
+@socketio.on("connect")
 def on_connect():
     ideas = Idea.query.all()
-    emit('init', [i.serialize() for i in ideas])
+    emit("init", [i.serialize() for i in ideas])
 
-@socketio.on('submit_idea')
+
+@socketio.on("submit_idea")
 def on_submit_idea(data):
-    idea = Idea(title=data['title'], description=data.get('description'))
+    idea = Idea(title=data["title"], description=data.get("description"))
     db.session.add(idea)
     db.session.commit()
-    emit('idea', idea.serialize(), broadcast=True)
+    emit("idea", idea.serialize(), broadcast=True)
 
-@socketio.on('vote')
+
+@socketio.on("vote")
 def on_vote(data):
-    idea = db.session.get(Idea, data['id'])
+    idea = db.session.get(Idea, data["id"])
     if idea:
-        idea.votes += data['change']
+        idea.votes += data["change"]
         db.session.commit()
-        emit('update_vote', idea.serialize(), broadcast=True)
+        emit("update_vote", idea.serialize(), broadcast=True)
 
-@socketio.on('clear_board')
+
+@socketio.on("clear_board")
 def on_clear_board():
     Idea.query.delete()
     db.session.commit()
-    emit('clear_board', broadcast=True)
+    emit("clear_board", broadcast=True)
 
-if __name__ == '__main__':
+
+# Entry point for the application
+if __name__ == "__main__":
     socketio.run(app, debug=True, allow_unsafe_werkzeug=True)
