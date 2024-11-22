@@ -11,26 +11,33 @@
   </head>
   <body>
     <div style="position: absolute; top: 10px; left: 10px;">
-      <a href="/">Home</a> |
-      <a href="/vote">Vote</a> |
-      <a href="/admin">Admin</a> |
-      <a href="/submit-question">Submit Question</a>
+      <a href="/">Home</a>
     </div>
-    <h1>Submit Your Question</h1>
-    <textarea
-      id="ideas-input"
-      rows="10"
-      cols="50"
-      placeholder="Ask your question..."
-    ></textarea>
-    <button id="submit-ideas">Submit Question</button>
+    <h1 style="margin-top: 50px; font-size: 2em; color: #333;">Submit Your Question</h1>
+    <div style="max-width: 600px; margin: 20px auto; padding: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+      <textarea
+        id="ideas-input"
+        rows="10"
+        cols="50"
+        placeholder="Ask your question..."
+        style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; font-size: 1em; margin-bottom: 10px;"
+      ></textarea>
+      <button id="submit-ideas" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; transition: background-color 0.3s;">
+        Submit Question
+      </button>
+    </div>
     <div id="submitted-question" style="margin-top: 20px; display: none;">
       <h2>You have successfully submitted the following question:</h2>
       <div class="idea-card" id="user-question">
         <h3 id="user-question-title"></h3>
         <ul class="card-description list-unstyled" id="user-question-description"></ul>
       </div>
-      <p>You can now <a href="/questions">view all questions</a> or <a href="/vote">vote on questions</a>.</p>
+      <p style="margin-top: 20px; font-size: 1.2em; color: #555;">
+        You can now 
+        <a href="/questions" style="color: #007bff; text-decoration: none; font-weight: bold;">view all questions</a> 
+        or 
+        <a href="/vote" style="color: #007bff; text-decoration: none; font-weight: bold;">vote on questions</a>.
+      </p>
     </div>
 
     <script>
