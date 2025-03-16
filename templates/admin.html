@@ -3,12 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
-    <link rel="stylesheet" href="static/css/styles.css">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
+    <style>
+        .admin-panel {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .admin-section {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        
+        .admin-title {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-button {
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .admin-button:hover {
+            background-color: #3367d6;
+        }
+        
+        .admin-button.danger {
+            background-color: #ea4335;
+        }
+        
+        .admin-button.danger:hover {
+            background-color: #d33426;
+        }
+        
+        .questions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .questions-table th, .questions-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .questions-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .questions-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .questions-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .status-message {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .home-link {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #4285f4;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .home-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <a href="/" style="position: absolute; top: 10px; left: 10px;">Home</a>
-    <h1>Admin Page</h1>
-    <p>This is the admin page for managing submitted questions. Functionality will be added here later.</p>
+    <a href="/" class="home-link">← Back to Home</a>
+    
+    <div class="admin-panel">
+        <h1 class="admin-title">Admin Panel</h1>
+        
+        <div class="admin-section">
+            <h2>Question Management</h2>
+            <p>This panel allows you to manage all submitted questions.</p>
+            
+            <div class="admin-actions">
+                <a href="/admin/export-csv" class="admin-button">Export All Questions to CSV</a>
+                <button id="clear-questions-btn" class="admin-button danger">Clear All Questions</button>
+            </div>
+            
+            <div id="status-message" class="status-message"></div>
+            
+            <div class="questions-summary">
+                <h3>Questions Overview ({{ ideas|length }} total)</h3>
+                {% if ideas %}
+                <table class="questions-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Votes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for idea in ideas %}
+                        <tr>
+                            <td>{{ idea.id }}</td>
+                            <td>{{ idea.title }}</td>
+                            <td>{{ idea.description }}</td>
+                            <td>{{ idea.votes }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No questions available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Confirm Action</h3>
+            <p>Are you sure you want to clear all questions? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button id="cancel-clear" class="admin-button">Cancel</button>
+                <button id="confirm-clear" class="admin-button danger">Yes, Clear All</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+            const modal = $("#confirmation-modal");
+            const statusMessage = $("#status-message");
+            
+            // Open confirmation modal when clear button is clicked
+            $("#clear-questions-btn").click(function() {
+                modal.css("display", "block");
+            });
+            
+            // Close modal when X is clicked
+            $(".close").click(function() {
+                modal.css("display", "none");
+            });
+            
+            // Close modal when Cancel is clicked
+            $("#cancel-clear").click(function() {
+                modal.css("display", "none");
+            });
+            
+            // Handle clear questions when confirmed
+            $("#confirm-clear").click(function() {
+                $.ajax({
+                    url: "/admin/clear-questions",
+                    type: "POST",
+                    success: function(response) {
+                        modal.css("display", "none");
+                        statusMessage.text("All questions have been cleared successfully.");
+                        statusMessage.removeClass("error").addClass("success");
+                        statusMessage.show();
+                        
+                        // Refresh the page after 2 seconds
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    },
+                    error: function(xhr) {
+                        modal.css("display", "none");
+                        statusMessage.text("Error clearing questions: " + xhr.responseJSON?.message || "Unknown error");
+                        statusMessage.removeClass("success").addClass("error");
+                        statusMessage.show();
+                    }
+                });
+            });
+            
+            // Close modal when clicking outside of it
+            $(window).click(function(event) {
+                if (event.target == modal[0]) {
+                    modal.css("display", "none");
+                }
+            });
+        });
+    </script>
 </body>
 </html>

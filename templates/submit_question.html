@@ -4,140 +4,323 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Submit Question</title>
-    <link rel="stylesheet" href="static/css/styles.css" />
+    <link rel="stylesheet" href="/static/css/styles.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="static/js/scripts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f5f7fa;
+        padding: 20px;
+        margin: 0;
+      }
+      
+      .nav-container {
+        position: relative;
+        width: 100%;
+        padding: 10px 0;
+        margin-bottom: 20px;
+      }
+      
+      .home-link {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: #4285f4;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      
+      .home-link:hover {
+        text-decoration: underline;
+      }
+      
+      .page-header {
+        text-align: center;
+        margin: 40px 0 30px;
+        color: #333;
+      }
+      
+      .submit-container {
+        max-width: 700px;
+        margin: 0 auto 40px;
+        padding: 30px;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+      }
+      
+      .form-label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+        color: #464646;
+      }
+      
+      .input-help {
+        margin-bottom: 15px;
+        color: #5f6368;
+        font-size: 0.9em;
+      }
+      
+      .question-input {
+        width: 100%;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #dadce0;
+        box-sizing: border-box;
+        font-size: 1em;
+        margin-bottom: 15px;
+        font-family: inherit;
+        resize: vertical;
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+      
+      .question-input:focus {
+        outline: none;
+        border-color: #4285f4;
+        box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+      }
+      
+      .submit-button {
+        width: 100%;
+        padding: 12px 20px;
+        background-color: #4285f4;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+      
+      .submit-button:hover {
+        background-color: #3367d6;
+      }
+      
+      .submit-button:active {
+        transform: scale(0.98);
+      }
+      
+      .success-container {
+        max-width: 700px;
+        margin: 30px auto;
+        padding: 0;
+        display: none;
+      }
+      
+      .success-message {
+        background-color: #d4edda;
+        color: #155724;
+        border-radius: 8px;
+        padding: 15px 20px;
+        margin-bottom: 25px;
+        text-align: center;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      
+      .question-card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        margin-bottom: 20px;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      
+      .question-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+      }
+      
+      .question-title {
+        font-size: 20px;
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #202124;
+      }
+      
+      .question-description {
+        color: #5f6368;
+        margin-bottom: 10px;
+      }
+      
+      .question-description p {
+        margin: 5px 0;
+      }
+      
+      .navigation-options {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+      }
+      
+      .nav-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #f1f3f4;
+        color: #3c4043;
+        text-decoration: none;
+        border-radius: 24px;
+        font-weight: bold;
+        transition: background-color 0.3s;
+      }
+      
+      .nav-button:hover {
+        background-color: #e8eaed;
+      }
+      
+      .loading-spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #4285f4;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+        display: none;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      .error-message {
+        color: #d93025;
+        margin-top: 5px;
+        font-size: 0.9em;
+        display: none;
+      }
+    </style>
   </head>
   <body>
-    <div style="position: absolute; top: 10px; left: 10px;">
-      <a href="/">Home</a>
+    <div class="nav-container">
+      <a href="/" class="home-link">← Back to Home</a>
     </div>
-    <h1 style="margin-top: 50px; font-size: 2em; color: #333;">Submit Your Question</h1>
-    <div style="max-width: 600px; margin: 20px auto; padding: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    
+    <h1 class="page-header">Submit Your Question</h1>
+    
+    <div class="submit-container">
+      <label for="question-input" class="form-label">Enter your question:</label>
+      <p class="input-help">
+        Start with your question on the first line. You can add more details on subsequent lines.
+      </p>
       <textarea
-        id="ideas-input"
-        rows="10"
-        cols="50"
-        placeholder="Ask your question..."
-        style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; font-size: 1em; margin-bottom: 10px;"
+        id="question-input"
+        class="question-input"
+        rows="6"
+        placeholder="Type your question here..."
       ></textarea>
-      <button id="submit-ideas" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; transition: background-color 0.3s;">
-        Submit Question
+      <div id="error-message" class="error-message">Please enter a question before submitting.</div>
+      <button id="submit-question" class="submit-button">
+        <span id="submit-text">Submit Question</span>
+        <div id="loading-spinner" class="loading-spinner"></div>
       </button>
     </div>
-    <div id="submitted-question" style="margin-top: 20px; display: none;">
-      <h2>You have successfully submitted the following question:</h2>
-      <div class="idea-card" id="user-question">
-        <h3 id="user-question-title"></h3>
-        <ul class="card-description list-unstyled" id="user-question-description"></ul>
+    
+    <div id="success-container" class="success-container">
+      <div class="success-message">
+        Your question has been successfully submitted!
       </div>
-      <p style="margin-top: 20px; font-size: 1.2em; color: #555;">
-        You can now 
-        <a href="/questions" style="color: #007bff; text-decoration: none; font-weight: bold;">view all questions</a> 
-        or 
-        <a href="/vote" style="color: #007bff; text-decoration: none; font-weight: bold;">vote on questions</a>.
-      </p>
+      
+      <div class="question-card">
+        <h3 class="question-title" id="submitted-title"></h3>
+        <div class="question-description" id="submitted-description"></div>
+      </div>
+      
+      <div class="navigation-options">
+        <a href="/questions" class="nav-button">View All Questions</a>
+        <a href="/vote" class="nav-button">Vote on Questions</a>
+      </div>
     </div>
 
     <script>
       $(document).ready(function () {
         const socket = io();
-
-        socket.on("init", function (ideas) {
-          $("#ideas-container").empty(); // Clear existing ideas to prevent duplicates
-          for (let idea of ideas) {
-            addIdeaCard(idea);
+        let userSubmittedQuestion = false;
+        let lastSubmittedIdea = null;
+        
+        // Handle question submission
+        $("#submit-question").click(function() {
+          const questionText = $("#question-input").val().trim();
+          
+          // Validate input
+          if (!questionText) {
+            $("#error-message").show();
+            return;
           }
-        });
-
-        socket.on("update_vote", function (idea) {
-          $(`#idea-${idea.id} .vote-count`).text(idea.votes);
-        });
-
-        socket.on("clear_board", function () {
-          $("#ideas-container").empty();
-        });
-
-        $("#submit-ideas").off("click").on("click", function () {
-          const inputText = $("#ideas-input").val();
-          const parsedIdeas = parseInput(inputText);
-
-          for (const idea of parsedIdeas) {
-            socket.emit("submit_idea", idea);
-          }
-          $("#ideas-input").val(''); // Clear the input after submission
-        });
-
-        $("#clear-board").click(function () {
-          socket.emit("clear_board");
-        });
-
-        function addIdeaCard(idea) {
-          const card = $("<div>")
-            .addClass("idea-card")
-            .attr("id", `idea-${idea.id}`);
-          const title = $("<h3>").text(idea.title);
-          const descriptionList = $("<ul>").addClass(
-            "card-description list-unstyled"
-          );
-
-          if (idea.description) {
-            const descriptionLines = idea.description.split("\n");
-            for (const line of descriptionLines) {
-              if (line.trim() !== "") {
-                const listItem = $("<li>").text(line);
-                descriptionList.append(listItem);
-              }
-            }
-          }
-
-          const voteButtons = $("<div>").addClass("vote-buttons");
-          const upvoteButton = $("<button>")
-            .text("Upvote")
-            .addClass("upvote-button");
-          const downvoteButton = $("<button>")
-            .text("Downvote")
-            .addClass("downvote-button");
-          const voteCount = $("<span>").text(idea.votes).addClass("vote-count");
-
-          upvoteButton.click(function () {
-            socket.emit("vote", { id: idea.id, change: 1 });
+          
+          $("#error-message").hide();
+          $("#submit-text").hide();
+          $("#loading-spinner").show();
+          
+          // Parse the input
+          const lines = questionText.split('\n');
+          const title = lines[0];
+          const description = lines.slice(1).join('\n').trim();
+          
+          // Set flag to indicate user is submitting a question
+          userSubmittedQuestion = true;
+          
+          // Emit the submission event
+          socket.emit("submit_idea", {
+            title: title,
+            description: description
           });
-
-          downvoteButton.click(function () {
-            socket.emit("vote", { id: idea.id, change: -1 });
-          });
-
-          voteButtons.append(upvoteButton, voteCount, downvoteButton);
-          card.append(title, descriptionList, voteButtons);
-          $("#ideas-container").append(card);
-        }
-
-        function parseInput(input) {
-          let lines = input.trim().split("\n");
-          let ideas = [];
-          let currentIdea = null;
-
-          for (let line of lines) {
-            if (line.startsWith(" ") || line.startsWith("\t")) {
-              if (currentIdea) {
-                currentIdea.description += "\n" + line.trim();
+          
+          // Clear the input
+          $("#question-input").val('');
+        });
+        
+        // Receive new idea (including the one the user just submitted)
+        socket.on("idea", function(idea) {
+          // Only show the success message if the user submitted a question
+          if (userSubmittedQuestion) {
+            // Store the submitted idea to display
+            lastSubmittedIdea = idea;
+            
+            // Display the submitted question
+            $("#submitted-title").text(idea.title);
+            
+            // Clear and populate the description
+            $("#submitted-description").empty();
+            if (idea.description) {
+              const descriptionLines = idea.description.split("\n");
+              for (const line of descriptionLines) {
+                if (line.trim()) {
+                  $("#submitted-description").append($("<p>").text(line));
+                }
               }
             } else {
-              if (currentIdea) {
-                ideas.push(currentIdea);
-              }
-              currentIdea = { title: line.trim(), description: "" };
+              $("#submitted-description").append($("<p><em>No additional details provided</em></p>"));
             }
+            
+            // Hide the spinner and show success container
+            $("#loading-spinner").hide();
+            $("#submit-text").show();
+            $("#success-container").show();
+            
+            // Scroll to the success message
+            $('html, body').animate({
+              scrollTop: $("#success-container").offset().top - 50
+            }, 500);
+            
+            // Reset the flag
+            userSubmittedQuestion = false;
           }
-
-          if (currentIdea) {
-            ideas.push(currentIdea);
-          }
-
-          return ideas;
-        }
+        });
+        
+        // Initialize with server data - we ignore this to fix the issue
+        socket.on("init", function(ideas) {
+          // We don't need to show any ideas on load, so we ignore this
+          console.log("Connected to server");
+        });
       });
     </script>
   </body>
