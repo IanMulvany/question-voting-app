@@ -67,6 +67,8 @@ $ pytest -s
 
 ### Starting the app from scratch and Setting up the DB for the first time. 
 
+### In Bash Shell:
+
 ```bash
 export FLASK_APP=main 
 flask db init
@@ -75,6 +77,15 @@ flask db upgrade
 python main.py
 ```
 
+### In Fish Shell:
+
+```fish
+set -x FLASK_APP main
+flask db init
+flask db migrate -m "Initial migration"
+flask db upgrade
+python main.py
+```
 
 ## Running the Application
 

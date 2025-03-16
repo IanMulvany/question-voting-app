@@ -3,3 +3,4 @@
 ideas.db
 *.pyc
 instance/*
+.DS_Store
