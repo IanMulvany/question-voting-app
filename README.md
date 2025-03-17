@@ -110,3 +110,42 @@ To run the application in development mode with live reloading, use the followin
 FLASK_ENV=development python main.py
 ```
 
+## Installing on Glitch, or keeping Glitch updated.  
+
+This app can run in Glitch (https://glitch.com), but I keep forgetting how to get it running, so here are some troubleshooting tips. 
+
+
+#### Updating the Glitch Repo
+
+Glitch can connect to your github repo. At the bottom of the glitch interface there is a row of features to help you manage your instance - STATUS, LOGS, TERMNIAL, TOOLS, PREVIEW. got into TOOLS and click on the "import/export" button, you can then import from Github and a modal pops up. For example for this app I put in `IanMulvany/question-voting-app` and it updates the local code with the latest commit from that repo. 
+
+I have found it useful to do a `refresh` after. 
+
+#### Essuring the DB is there. 
+
+Through the course of creating this app I changed the DB name, but the old DB was still in glitch causing an error. You can get to a clean state by removing the `migrations` folder if it already esitst, and then in the `instance` folder you shoud have the correctly named db - in this case `ideas_prod.db`. 
+
+To check if the right table is present you can do this
+
+```bash 
+cd instance/
+sqlite3 ideas_prod.db
+.tables
+```
+
+If the tables are missing, then to recreate them you can do the following
+
+```bash
+export FLASK_APP=main 
+flask db init
+flask db migrate -m "Initial migration"
+flask db upgrade 
+```
+
+Rather than running the app from the terminal run this command instead:
+
+```bash
+refresh
+```
+
+That got it working for me. 
