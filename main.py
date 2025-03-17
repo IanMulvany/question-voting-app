@@ -8,10 +8,6 @@ from io import StringIO
 from datetime import datetime
 
 # Initialize extensions
-db = SQLAlchemy()
-migrate = Migrate()
-socketio = SocketIO()
-
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
     "DATABASE_URL", "sqlite:///ideas_prod.db"
